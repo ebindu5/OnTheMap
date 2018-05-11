@@ -13,19 +13,16 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var loginEmail: UITextField!
     @IBOutlet weak var loginPassword: UITextField!
     @IBOutlet weak var debugText: UILabel!
-var keyboardOnScreen = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loginEmail.delegate = self
         loginPassword.delegate = self
-
     }
 
     @IBAction func signUp(_ sender: Any) {
         let url = "https://www.udacity.com/account/auth#!/signup"
         UIApplication.shared.open(URL(string: url)!, options: [:], completionHandler: nil)
-        
     }
     
     @IBAction func loginPressed(_ sender: Any) {

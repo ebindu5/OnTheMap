@@ -18,9 +18,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
-        
     }
-    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -105,8 +103,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
         // When the array is complete, we add the annotations to the map.
         self.mapView.addAnnotations(self.annotations)
-        
-        
     }
     
     @IBAction func refreshData(_ sender: Any) {
@@ -116,7 +112,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 if success{
                     self.locations = locations
                     self.reloadMap()
-                    
                 }else{
                     print(error!)
                 }
@@ -143,9 +138,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }else{
             pinView?.annotation = annotation
         }
-        
         return pinView
-        
     }
     
     

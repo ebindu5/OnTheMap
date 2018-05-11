@@ -51,6 +51,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		90777DC020A517ED00E2D0F3 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				90C0BD6B209BBD6700B3B693 /* Constants.swift */,
+				90AF03BD209BE1D700C7B76A /* OTMConvenience.swift */,
+				90FC8BE720A22FDE0088F48C /* OTMClient.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		90777DC120A5180E00E2D0F3 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				90C0BD57209BAC3D00B3B693 /* LoginViewController.swift */,
+				90C0BD6D209BD69C00B3B693 /* MapViewController.swift */,
+				90FC8BEA20A267070088F48C /* MapTableViewController.swift */,
+				90279B7D20A29EBB0024298E /* SetLocationViewController.swift */,
+				908B5C2220A3976B00B682BE /* FinishLocationViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
 		90C0BD49209BAC3D00B3B693 = {
 			isa = PBXGroup;
 			children = (
@@ -71,29 +93,23 @@
 			isa = PBXGroup;
 			children = (
 				90C0BD55209BAC3D00B3B693 /* AppDelegate.swift */,
-				90FC8BE920A2312A0088F48C /* View */,
-				90C0BD61209BAC4000B3B693 /* Info.plist */,
-				90C0BD57209BAC3D00B3B693 /* LoginViewController.swift */,
-				90C0BD6B209BBD6700B3B693 /* Constants.swift */,
-				90C0BD6D209BD69C00B3B693 /* MapViewController.swift */,
-				90AF03BD209BE1D700C7B76A /* OTMConvenience.swift */,
 				907D7EA420A124B40014636E /* GCDBlackBox.swift */,
-				90FC8BE720A22FDE0088F48C /* OTMClient.swift */,
-				90FC8BEA20A267070088F48C /* MapTableViewController.swift */,
-				90279B7D20A29EBB0024298E /* SetLocationViewController.swift */,
-				908B5C2220A3976B00B682BE /* FinishLocationViewController.swift */,
+				90FC8BE920A2312A0088F48C /* Assets */,
+				90C0BD61209BAC4000B3B693 /* Info.plist */,
+				90777DC120A5180E00E2D0F3 /* Controller */,
+				90777DC020A517ED00E2D0F3 /* Model */,
 			);
 			path = OntheMap;
 			sourceTree = "<group>";
 		};
-		90FC8BE920A2312A0088F48C /* View */ = {
+		90FC8BE920A2312A0088F48C /* Assets */ = {
 			isa = PBXGroup;
 			children = (
 				90C0BD59209BAC3D00B3B693 /* Main.storyboard */,
 				90C0BD5C209BAC4000B3B693 /* Assets.xcassets */,
 				90C0BD5E209BAC4000B3B693 /* LaunchScreen.storyboard */,
 			);
-			path = View;
+			path = Assets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
