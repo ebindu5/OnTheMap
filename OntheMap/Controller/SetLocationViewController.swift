@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class SetLocationViewController: UIViewController{
+class SetLocationViewController: UIViewController, UITextFieldDelegate{
     
     @IBOutlet var locationText : UITextField!
     @IBOutlet var mediaURL: UITextField!
@@ -18,7 +18,10 @@ class SetLocationViewController: UIViewController{
         dismiss(animated: true, completion: nil)
     }
     
-    
+    override func viewDidLoad() {
+        locationText.delegate = self
+        mediaURL.delegate = self
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if !(OTMClient.sharedInstance().appdelegate?.objectId?.isEmpty)!{
@@ -43,6 +46,12 @@ class SetLocationViewController: UIViewController{
             
         }
         
+    }
+    
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
     
     
