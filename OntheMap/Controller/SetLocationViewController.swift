@@ -14,7 +14,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate{
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet var locationText : UITextField!
     @IBOutlet var mediaURL: UITextField!
-    var currentTextField : UITextField!
+
     @IBAction func cancelPressed(){
         dismiss(animated: true, completion: nil)
     }
@@ -22,11 +22,6 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate{
     override func viewDidLoad() {
         locationText.delegate = self
         mediaURL.delegate = self
-        
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        subscribeToKeyboardNotifications()
         if !(StudentsDatasource.objectId!.isEmpty){
             let alert = UIAlertController(title: "", message: "You have alreay posted a student location. Would you like to overwrite your current location?", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Overwrite", style: UIAlertActionStyle.default, handler: nil))
@@ -35,6 +30,12 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate{
             }))
             self.present(alert, animated: true, completion: nil)
         }
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        subscribeToKeyboardNotifications()
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -60,9 +61,9 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate{
 
 extension SetLocationViewController{
     
-   @IBAction func userDidTapView(_ sender: AnyObject) {
-//        resignIfFirstResponder(usernameTextField)
-//        resignIfFirstResponder(passwordTextField)
+    @IBAction func userDidTapView(_ sender: AnyObject) {
+                resignIfFirstResponder(locationText)
+                resignIfFirstResponder(mediaURL)
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -85,12 +86,7 @@ extension SetLocationViewController{
     // MARK: - keyboard show
     @objc func keyboardWillShow(_ notification:Notification) {
         let keyBoardHeight = getKeyboardHeight(notification)
-           scrollView.contentInset.bottom = keyBoardHeight
-//        if (currentTextField == locationText){
-//            view.frame.origin.y -= locationText.frame.origin.y
-//        }else{
-//            view.frame.origin.y -= mediaURL.frame.origin.y
-//        }
+        scrollView.contentInset.bottom = keyBoardHeight
     }
     
     // MARK: - keyboard hide
@@ -105,16 +101,7 @@ extension SetLocationViewController{
         return keyboardSize.cgRectValue.height
     }
     
-    
-//    func textFieldDidBeginEditing(_ textField: UITextField) {
-//        if textField == locationText{
-//            currentTextField = locationText
-//        }else if textField == mediaURL{
-//            currentTextField = mediaURL
-//        }
-//
-//    }
-    
+
     private func resignIfFirstResponder(_ textField: UITextField) {
         if textField.isFirstResponder {
             textField.resignFirstResponder()
@@ -127,5 +114,5 @@ extension SetLocationViewController{
         return keyboardSize.cgRectValue.height
     }
     
-
+    
 }

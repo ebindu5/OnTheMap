@@ -9,12 +9,12 @@
 import UIKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
-
+    
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var loginEmail: UITextField!
     @IBOutlet weak var loginPassword: UITextField!
     @IBOutlet weak var debugText: UILabel!
-    var currentTextField : UITextField!
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +23,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         loginEmail.delegate = self
         loginPassword.delegate = self
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         subscribeToKeyboardNotifications()
@@ -48,25 +48,25 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     StudentsDatasource.sessionId = session_id
                     StudentsDatasource.accountId = account_id
                     OTMClient.getUserData(account_id!){ (success, results, error) in
-                            if let user = results?["user"] as? [String: AnyObject]{
-                                if let firstName = user["first_name"] as? String{
-                                    StudentsDatasource.userFirstName = firstName
+                        if let user = results?["user"] as? [String: AnyObject]{
+                            if let firstName = user["first_name"] as? String{
+                                StudentsDatasource.userFirstName = firstName
+                            }
+                            if let lastName = user["last_name"] as? String{
+                                StudentsDatasource.userLastName = lastName
+                            }
+                            
+                            OTMClient.getObjectId{(success, object_id, error) in
+                                if success{
+                                    StudentsDatasource.objectId = object_id!
                                 }
-                                if let lastName = user["last_name"] as? String{
-                                    StudentsDatasource.userLastName = lastName
-                                }
-                                
-                                OTMClient.getObjectId{(success, object_id, error) in
-                                    if success{
-                                        StudentsDatasource.objectId = object_id!
-                                    }
-                                }
-                            } 
+                            }
+                        }
                     }
                     let controller = self.storyboard?.instantiateViewController(withIdentifier: "MapTabBarController") as! UITabBarController
                     self.present(controller, animated: true, completion: nil)
                 } else {
-                   self.debugText.text = error
+                    self.debugText.text = error
                 }
             }
             
@@ -78,8 +78,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 extension LoginViewController{
     
     @IBAction func userDidTapView(_ sender: AnyObject) {
-                resignIfFirstResponder(loginPassword)
-                resignIfFirstResponder(loginEmail)
+        resignIfFirstResponder(loginPassword)
+        resignIfFirstResponder(loginEmail)
     }
     
     
@@ -104,7 +104,7 @@ extension LoginViewController{
     @objc func keyboardWillShow(_ notification:Notification) {
         let keyBoardHeight = getKeyboardHeight(notification)
         scrollView.contentInset.bottom = keyBoardHeight
-
+        
     }
     
     // MARK: - keyboard hide
@@ -120,28 +120,19 @@ extension LoginViewController{
     }
     
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        if textField == loginEmail{
-            currentTextField = loginEmail
-        }else if textField == loginPassword{
-            currentTextField = loginPassword
-        }
-       
-    }
-
     private func keyboardHeight(_ notification: Notification) -> CGFloat {
         let userInfo = (notification as NSNotification).userInfo
         let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
         return keyboardSize.cgRectValue.height
     }
-
+    
     private func resignIfFirstResponder(_ textField: UITextField) {
         if textField.isFirstResponder {
             textField.resignFirstResponder()
         }
     }
-
-
-
+    
+    
+    
 }
 

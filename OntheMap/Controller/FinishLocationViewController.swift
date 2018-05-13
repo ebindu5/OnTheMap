@@ -20,10 +20,14 @@ class FinishLocationViewController: UIViewController, MKMapViewDelegate, CLLocat
     let dateformatter = DateFormatter()
     var latitude : Double?
     var longitude: Double?
+    
+    @IBOutlet weak var loadImageView: UIImageView!
     override func viewDidLoad() {
         
         let geoCoder = CLGeocoder()
+        loadImageView.isHidden = false
         geoCoder.geocodeAddressString(locationText!) { (placemark, error) in
+            self.loadImageView.isHidden = true
             guard  error == nil else{
                 OTMClient.alert(self,"Alert", "Encountered a problem")
                 return
@@ -113,7 +117,6 @@ class FinishLocationViewController: UIViewController, MKMapViewDelegate, CLLocat
             }
         }
     }
-    
     
     
     
