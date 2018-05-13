@@ -10,9 +10,11 @@ import UIKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
 
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var loginEmail: UITextField!
     @IBOutlet weak var loginPassword: UITextField!
     @IBOutlet weak var debugText: UILabel!
+    var currentTextField : UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +22,17 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         loginPassword.delegate = self
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        subscribeToKeyboardNotifications()
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        unsubscribeFromKeyboardNotifications()
+    }
+    
     @IBAction func signUp(_ sender: Any) {
         let url = "https://www.udacity.com/account/auth#!/signup"
         UIApplication.shared.open(URL(string: url)!, options: [:], completionHandler: nil)
@@ -52,7 +65,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     let controller = self.storyboard?.instantiateViewController(withIdentifier: "MapTabBarController") as! UITabBarController
                     self.present(controller, animated: true, completion: nil)
                 } else {
-                   self.debugText.text = error?.localizedDescription
+                   self.debugText.text = error
                 }
             }
             
@@ -63,46 +76,71 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 
 extension LoginViewController{
     
+    @IBAction func userDidTapView(_ sender: AnyObject) {
+                resignIfFirstResponder(loginPassword)
+                resignIfFirstResponder(loginEmail)
+    }
+    
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
     
-//    func textFieldDidBeginEditing(_ textField: UITextField) {
-//        subscribeToNotification(.UIKeyboardWillShow, selector: #selector(keyboardWillShow))
-//        subscribeToNotification(.UIKeyboardWillHide, selector: #selector(keyboardWillHide))
-//    }
-//
-//    func textFieldDidEndEditing(_ textField: UITextField) {
-//        unsubscribeFromAllNotifications()
-//    }
-//
-//    private func keyboardHeight(_ notification: Notification) -> CGFloat {
-//        let userInfo = (notification as NSNotification).userInfo
-//        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
-//        return keyboardSize.cgRectValue.height
-//    }
-//
-//    private func resignIfFirstResponder(_ textField: UITextField) {
-//        if textField.isFirstResponder {
-//            textField.resignFirstResponder()
-//        }
-//    }
-//
-//    @objc func keyboardWillShow(_ notification: Notification) {
-//            view.frame.origin.y -= keyboardHeight(notification)
-//    }
-//
-//    @ objc func keyboardWillHide(_ notification: Notification) {
-//            view.frame.origin.y = 0
-//    }
-//
-//    func subscribeToNotification(_ notification: NSNotification.Name, selector: Selector) {
-//        NotificationCenter.default.addObserver(self, selector: selector, name: notification, object: nil)
-//    }
-//
-//    func unsubscribeFromAllNotifications() {
-//        NotificationCenter.default.removeObserver(self)
-//    }
+    // MARK: - keyboard subscribe
+    func subscribeToKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    // MARK: - keyboard unsubscribe
+    func unsubscribeFromKeyboardNotifications() {
+        // Removes all observers at once
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    // MARK: - keyboard show
+    @objc func keyboardWillShow(_ notification:Notification) {
+        let keyBoardHeight = getKeyboardHeight(notification)
+        scrollView.contentInset.bottom = keyBoardHeight
+
+    }
+    
+    // MARK: - keyboard hide
+    @objc func keyboardWillHide(_ notification:Notification) {
+        view.frame.origin.y = 0
+    }
+    
+    // MARK: - keyboard Height
+    func getKeyboardHeight(_ notification:Notification) -> CGFloat {
+        let userInfo = notification.userInfo
+        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue // of CGRect
+        return keyboardSize.cgRectValue.height
+    }
+    
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField == loginEmail{
+            currentTextField = loginEmail
+        }else if textField == loginPassword{
+            currentTextField = loginPassword
+        }
+       
+    }
+
+    private func keyboardHeight(_ notification: Notification) -> CGFloat {
+        let userInfo = (notification as NSNotification).userInfo
+        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
+        return keyboardSize.cgRectValue.height
+    }
+
+    private func resignIfFirstResponder(_ textField: UITextField) {
+        if textField.isFirstResponder {
+            textField.resignFirstResponder()
+        }
+    }
+
+
+
 }
 

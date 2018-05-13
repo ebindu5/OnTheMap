@@ -27,6 +27,10 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         OTMClient.sharedInstance().getStudentLocations({ (success, locations, error) in
+            guard error == nil else{
+                OTMClient.sharedInstance().alert(self, "Error", error!)
+                return
+            }
             if success{
                 performUIUpdatesOnMain {
                     self.locations = (OTMClient.sharedInstance().appdelegate?.locations)!
@@ -34,6 +38,7 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
                     self.tableView.reloadData()
                 }
             }
+            
         })
     }
     
@@ -53,6 +58,10 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
     @IBAction func refreshData(_ sender: Any) {
         
         OTMClient.sharedInstance().getStudentLocations({ (success, locations, error) in
+            guard error == nil else{
+                OTMClient.sharedInstance().alert(self, "Error", error!)
+                return
+            }
             if success{
                 OTMClient.sharedInstance().appdelegate?.locations =  locations
             }

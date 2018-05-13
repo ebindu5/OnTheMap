@@ -27,7 +27,7 @@ extension OTMClient {
     
     
     
-    func postingSession(_ username : String, _ password: String, _ completionHandlerForPostSession: @escaping (_ success: Bool, _ session_id: String?, _ account_key: String?, _ errorString: NSError?) -> Void) {
+    func postingSession(_ username : String, _ password: String, _ completionHandlerForPostSession: @escaping (_ success: Bool, _ session_id: String?, _ account_key: String?, _ errorString: String?) -> Void) {
         
         let parameters = [String:AnyObject]()
         let jsonBody = "{\"udacity\": {\"username\": \"\(username)\", \"password\": \"\(password)\"}}"
@@ -36,21 +36,16 @@ extension OTMClient {
             (results,error) in
             
             guard error == nil else{
-                 completionHandlerForPostSession(false, nil, nil, error)
+                 completionHandlerForPostSession(false, nil, nil, (error?.localizedDescription)!)
                 return
             }
-            
-            
-            if let error = error {
-                completionHandlerForPostSession(false, nil, nil,error)
-            } else {
                 if let session = results?[Constants.OTMResponseKeys.Session] as? [String: AnyObject], let session_id = session[Constants.OTMResponseKeys.ID] as? String, let account = results?["account"] as? [String: AnyObject], let account_id = account["key"] as? String{
                     completionHandlerForPostSession(true, session_id, account_id, nil)
                 } else {
                     print("Could not find \(Constants.OTMResponseKeys.Session) in \(results!)")
-                    completionHandlerForPostSession(false, nil,nil, error)
+                    completionHandlerForPostSession(false, nil,nil, (error?.localizedDescription)!)
                 }
-            }
+            
         }
     }
     

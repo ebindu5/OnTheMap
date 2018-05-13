@@ -12,22 +12,18 @@ import UIKit
 class OTMClient : NSObject{
     
     let appdelegate = UIApplication.shared.delegate as? AppDelegate
-    override init() {
-        super.init()
-    }
-    
     
     func taskForPOSTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, _ api_name: String, completionHandlerForPOST: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
         
         var request : URLRequest!
-        
+
         if api_name == "UDACITY_API" {
             request = URLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
             request.httpMethod = "POST"
             request.addValue("application/json", forHTTPHeaderField: "Accept")
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         }else{
-            request = URLRequest(url: URL(string: ( "https://parse.udacity.com/parse/classes/StudentLocation" + method ))!)
+            request =   URLRequest(url: URL(string: ( "https://parse.udacity.com/parse/classes/StudentLocation" + method ))!)
             if api_name == "PUT"{
                 request.httpMethod = "PUT"
                 request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -42,14 +38,14 @@ class OTMClient : NSObject{
         /* 4. Make the request */
         let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
             func sendError(_ error: String) {
-                print(error)
+//                print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completionHandlerForPOST(nil, NSError(domain: "taskForPOSTMethod", code: 1, userInfo: userInfo))
             }
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                sendError("There was an error with your request: \(error!)")
+                sendError((error?.localizedDescription)!)
                 return
             }
             
@@ -72,7 +68,9 @@ class OTMClient : NSObject{
             self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
         }
         task.resume()
-        return task
+               return task
+        
+     
     }
     
     // given raw JSON, return a usable Foundation object
@@ -155,7 +153,7 @@ class OTMClient : NSObject{
         }
         
         if withPathExtension == "GET"{
-            components.query =  "where={\"uniqueKey\": \"\((OTMClient.sharedInstance().appdelegate?.accountId)!)\"}"
+            components.query =  "where={\"uniqueKey\": \"\((self.appdelegate?.accountId)!)\"}"
         }else{
             components.queryItems = [URLQueryItem]()
             for (key, value) in parameters {
@@ -168,16 +166,17 @@ class OTMClient : NSObject{
     
     func getStudentLocations( _ completionHandlerForGetStudentLocations: @escaping (_ success: Bool, _ locations : [[String:AnyObject]], _ errorString: String?) -> Void) {
         
-        let parameters = ["order" : "-updatedAt"]
         
-        let _ =  OTMClient.sharedInstance().taskForGETMethod("", parameters as [String : AnyObject], "PARSE_API") { (results, error) in
+        let parameters = ["order" : "-updatedAt", "limit" : 100] as [String : AnyObject]
+        
+        let _ =  OTMClient.sharedInstance().taskForGETMethod("", parameters, "PARSE_API") { (results, error) in
             
-            if let error = error {
-                print(error)
+            if error != nil {
+//                print(error)
                 completionHandlerForGetStudentLocations(false, [[:]], "Unable to get student location Information")
             } else {
                 if let locations = results?["results"] as? [[String: AnyObject]]{
-                    OTMClient.sharedInstance().appdelegate?.locations = locations
+                    self.appdelegate?.locations = locations
                     completionHandlerForGetStudentLocations(true, locations, nil)
                 } else {
                     print("Could not find \(Constants.OTMResponseKeys.Session) in \(results!)")

@@ -26,10 +26,12 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         OTMClient.sharedInstance().getStudentLocations { (success, locations, error) in
             performUIUpdatesOnMain {
                 if success{
+//                    StudentsDatasource.locations = locations
                     self.locations = locations
                     self.reloadMap()
                 }else{
-                    print(error!)
+                    OTMClient.sharedInstance().alert(self, "Error", error!)
+                    //print(error!)
                 }
             }
         }
@@ -113,7 +115,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                     self.locations = locations
                     self.reloadMap()
                 }else{
-                    print(error!)
+                   OTMClient.sharedInstance().alert(self, "Error", error!)
                 }
             }
         }

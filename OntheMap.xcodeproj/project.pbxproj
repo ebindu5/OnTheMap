@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		90279B7E20A29EBB0024298E /* SetLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90279B7D20A29EBB0024298E /* SetLocationViewController.swift */; };
+		90777DC320A7CBD800E2D0F3 /* StudentInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90777DC220A7CBD800E2D0F3 /* StudentInformation.swift */; };
+		90777DC520A7CEB100E2D0F3 /* StudentsDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90777DC420A7CEB100E2D0F3 /* StudentsDatasource.swift */; };
 		907D7EA520A124B40014636E /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 907D7EA420A124B40014636E /* GCDBlackBox.swift */; };
 		908B5C2320A3976B00B682BE /* FinishLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908B5C2220A3976B00B682BE /* FinishLocationViewController.swift */; };
 		90AF03BE209BE1D700C7B76A /* OTMConvenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AF03BD209BE1D700C7B76A /* OTMConvenience.swift */; };
@@ -24,6 +26,8 @@
 
 /* Begin PBXFileReference section */
 		90279B7D20A29EBB0024298E /* SetLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetLocationViewController.swift; sourceTree = "<group>"; };
+		90777DC220A7CBD800E2D0F3 /* StudentInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentInformation.swift; sourceTree = "<group>"; };
+		90777DC420A7CEB100E2D0F3 /* StudentsDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentsDatasource.swift; sourceTree = "<group>"; };
 		907D7EA420A124B40014636E /* GCDBlackBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
 		908B5C2220A3976B00B682BE /* FinishLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishLocationViewController.swift; sourceTree = "<group>"; };
 		90AF03BD209BE1D700C7B76A /* OTMConvenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OTMConvenience.swift; sourceTree = "<group>"; };
@@ -57,6 +61,8 @@
 				90C0BD6B209BBD6700B3B693 /* Constants.swift */,
 				90AF03BD209BE1D700C7B76A /* OTMConvenience.swift */,
 				90FC8BE720A22FDE0088F48C /* OTMClient.swift */,
+				90777DC220A7CBD800E2D0F3 /* StudentInformation.swift */,
+				90777DC420A7CEB100E2D0F3 /* StudentsDatasource.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -187,12 +193,14 @@
 				90C0BD6C209BBD6700B3B693 /* Constants.swift in Sources */,
 				90FC8BE820A22FDE0088F48C /* OTMClient.swift in Sources */,
 				90C0BD58209BAC3D00B3B693 /* LoginViewController.swift in Sources */,
+				90777DC520A7CEB100E2D0F3 /* StudentsDatasource.swift in Sources */,
 				90C0BD56209BAC3D00B3B693 /* AppDelegate.swift in Sources */,
 				90C0BD6E209BD69C00B3B693 /* MapViewController.swift in Sources */,
 				907D7EA520A124B40014636E /* GCDBlackBox.swift in Sources */,
 				90AF03BE209BE1D700C7B76A /* OTMConvenience.swift in Sources */,
 				90279B7E20A29EBB0024298E /* SetLocationViewController.swift in Sources */,
 				90FC8BEB20A267070088F48C /* MapTableViewController.swift in Sources */,
+				90777DC320A7CBD800E2D0F3 /* StudentInformation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
