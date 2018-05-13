@@ -18,8 +18,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loginEmail.text = "e.bindu5@gmail.com"
-        loginPassword.text = "Vinayaka@5"
         loginEmail.delegate = self
         loginPassword.delegate = self
     }
