@@ -13,7 +13,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     
     @IBOutlet weak var mapView: MKMapView!
-    var locations = [[String:AnyObject]]()
+    var locations = [StudentInformation]()
     var annotations = [MKPointAnnotation]()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,25 +22,18 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        OTMClient.sharedInstance().getStudentLocations { (success, locations, error) in
-            performUIUpdatesOnMain {
-                if success{
-//                    StudentsDatasource.locations = locations
-                    self.locations = locations
-                    self.reloadMap()
-                }else{
-                    OTMClient.sharedInstance().alert(self, "Error", error!)
-                    //print(error!)
-                }
-            }
+        if StudentsDatasource.locations != nil{
+            locations = StudentsDatasource.locations!
+        }else{
+            studentLocations()
         }
+        self.reloadMap()
         
     }
     
     
     @IBAction func logOutPressed(_ sender: Any) {
-        OTMClient.sharedInstance().deletingSession { (success, message, error) in
+        OTMClient.deletingSession { (success, message, error) in
             if success{
                 print("success")
                 let vc = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as? LoginViewController
@@ -66,11 +59,11 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             var first = String()
             var last = String()
             
-            if let lati = self.nullToNil(value: dictionary["latitude"]){
+            if let lati = self.nullToNil(value: dictionary.latitude as AnyObject){
                 lat = CLLocationDegrees(lati as! Double)
             }
             
-            if let longi = self.nullToNil(value: dictionary["longitude"]){
+            if let longi = self.nullToNil(value: dictionary.longitude as AnyObject){
                 long = CLLocationDegrees(longi as! Double)
             }
             
@@ -78,16 +71,16 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             // The lat and long are used to create a CLLocationCoordinates2D instance.
             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
             
-            if  let firstn = self.nullToNil(value: dictionary["firstName"]) {
+            if  let firstn = self.nullToNil(value: dictionary.firstName as AnyObject) {
                 first = firstn as! String
             }
             
-            if  let lastn = self.nullToNil(value: dictionary["lastName"]) {
+            if  let lastn = self.nullToNil(value: dictionary.lastName as AnyObject) {
                 last = lastn as! String
             }
             
             
-            if  let media = self.nullToNil(value: dictionary["mediaURL"])  {
+            if  let media = self.nullToNil(value: dictionary.mediaURL as AnyObject)  {
                 mediaURL = media as! String
             }
             
@@ -107,18 +100,23 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         self.mapView.addAnnotations(self.annotations)
     }
     
-    @IBAction func refreshData(_ sender: Any) {
-        
-        OTMClient.sharedInstance().getStudentLocations { (success, locations, error) in
+    func studentLocations(){
+        OTMClient.getStudentLocations { (success, locations, error) in
             performUIUpdatesOnMain {
                 if success{
                     self.locations = locations
                     self.reloadMap()
                 }else{
-                   OTMClient.sharedInstance().alert(self, "Error", error!)
+                    OTMClient.alert(self, "Error", error!)
                 }
             }
         }
+        
+    }
+    
+    
+    @IBAction func refreshData(_ sender: Any) {
+        studentLocations()
     }
     
     

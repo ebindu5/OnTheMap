@@ -11,7 +11,7 @@ import UIKit
 
 class MapTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var locations = [[String: AnyObject]]()
+    var locations = [StudentInformation]()
     
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
@@ -20,30 +20,16 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        
-    }
-    //
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        OTMClient.sharedInstance().getStudentLocations({ (success, locations, error) in
-            guard error == nil else{
-                OTMClient.sharedInstance().alert(self, "Error", error!)
-                return
-            }
-            if success{
-                performUIUpdatesOnMain {
-                    self.locations = (OTMClient.sharedInstance().appdelegate?.locations)!
-                    OTMClient.sharedInstance().appdelegate?.locations =  locations
-                    self.tableView.reloadData()
-                }
-            }
-            
-        })
+        if StudentsDatasource.locations != nil {
+            locations = StudentsDatasource.locations!
+        }else{
+            studentLocations()
+        }
     }
     
+    
     @IBAction func logOutPressed(_ sender: Any) {
-        OTMClient.sharedInstance().deletingSession { (success, message, error) in
+        OTMClient.deletingSession { (success, message, error) in
             if success{
                 print("success")
                 let vc = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as? LoginViewController
@@ -56,17 +42,7 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
     
     
     @IBAction func refreshData(_ sender: Any) {
-        
-        OTMClient.sharedInstance().getStudentLocations({ (success, locations, error) in
-            guard error == nil else{
-                OTMClient.sharedInstance().alert(self, "Error", error!)
-                return
-            }
-            if success{
-                OTMClient.sharedInstance().appdelegate?.locations =  locations
-            }
-        })
-        tableView.reloadData()
+        studentLocations()
     }
     
     
@@ -78,11 +54,11 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "MapTableViewCell", for: indexPath)
         let location = locations[(indexPath as NSIndexPath).row]
-        if let firstname = location["firstName"], let lastname = location["lastName"] {
-            cell.textLabel?.text = (firstname as! String) + " " + (lastname as! String)
+        if let firstname = location.firstName, let lastname = location.lastName {
+            cell.textLabel?.text = (firstname ) + " " + (lastname )
         }
-        if let mediaURL = location["mediaURL"]{
-            cell.detailTextLabel?.text = mediaURL as? String
+        if let mediaURL = location.mediaURL{
+            cell.detailTextLabel?.text = mediaURL
         }
         cell.imageView?.image = #imageLiteral(resourceName: "icon_pin")
         return cell
@@ -93,7 +69,7 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var can_not_open = true
         let location = locations[(indexPath as NSIndexPath).row]
-        if let mediaURL = location["mediaURL"], let url = URL(string: mediaURL as! String){
+        if let mediaURL = location.mediaURL, let url = URL(string: mediaURL ){
             if UIApplication.shared.canOpenURL(url){
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
                 can_not_open = false
@@ -105,5 +81,21 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
             self.present(alert, animated: true, completion: nil)
         }
+        
+    }
+    func studentLocations(){
+        OTMClient.getStudentLocations({ (success, locations, error) in
+            guard error == nil else{
+                OTMClient.alert(self, "Error", error!)
+                return
+            }
+            if success{
+                performUIUpdatesOnMain {
+                    self.locations = locations
+                    self.tableView.reloadData()
+                }
+            }
+            
+        })
     }
 }

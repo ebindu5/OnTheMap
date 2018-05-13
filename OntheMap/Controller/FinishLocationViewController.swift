@@ -18,17 +18,19 @@ class FinishLocationViewController: UIViewController, MKMapViewDelegate, CLLocat
     var firstName : String?
     var lastName : String?
     let dateformatter = DateFormatter()
+    var latitude : Double?
+    var longitude: Double?
     override func viewDidLoad() {
         
         let geoCoder = CLGeocoder()
         geoCoder.geocodeAddressString(locationText!) { (placemark, error) in
             guard  error == nil else{
-                OTMClient.sharedInstance().alert(self,"Alert", "Encountered a problem")
+                OTMClient.alert(self,"Alert", "Encountered a problem")
                 return
             }
             
             guard let location = placemark else{
-                OTMClient.sharedInstance().alert(self,"Alert", "No such place exists")
+                OTMClient.alert(self,"Alert", "No such place exists")
                 return
             }
             
@@ -38,10 +40,10 @@ class FinishLocationViewController: UIViewController, MKMapViewDelegate, CLLocat
             if let coordinates = locCoordinates {
                 self.mapView.delegate = self
                 let coordinate = coordinates.coordinate
-                OTMClient.sharedInstance().appdelegate?.latitude = coordinate.latitude
-                OTMClient.sharedInstance().appdelegate?.longitude = coordinate.longitude
-                self.firstName =   OTMClient.sharedInstance().appdelegate?.firstName
-                self.lastName =   OTMClient.sharedInstance().appdelegate?.lastName
+                self.latitude = coordinate.latitude
+                self.longitude = coordinate.longitude
+                self.firstName =   StudentsDatasource.userFirstName
+                self.lastName =   StudentsDatasource.userLastName
                 
                 annotation.coordinate = coordinate
                 if let firstName = self.firstName, let lastName = self.lastName {
@@ -78,9 +80,9 @@ class FinishLocationViewController: UIViewController, MKMapViewDelegate, CLLocat
     
     
     @IBAction func updateStudentLocation(_ sender: Any) {
-        let jsonBody =  "{\"uniqueKey\": \"\((OTMClient.sharedInstance().appdelegate?.accountId)!)\", \"firstName\": \"\((OTMClient.sharedInstance().appdelegate?.firstName)!)\", \"lastName\": \"\((OTMClient.sharedInstance().appdelegate?.lastName)!)\",\"mapString\": \"\((self.locationText)!)\", \"mediaURL\": \"\(mediaURL!)\",\"latitude\": \((OTMClient.sharedInstance().appdelegate?.latitude)!), \"longitude\": \((OTMClient.sharedInstance().appdelegate?.longitude)!)}"
+        let jsonBody =  "{\"uniqueKey\": \"\((StudentsDatasource.accountId)!)\", \"firstName\": \"\((StudentsDatasource.userFirstName)!)\", \"lastName\": \"\((StudentsDatasource.userLastName)!)\",\"mapString\": \"\((self.locationText)!)\", \"mediaURL\": \"\(mediaURL!)\",\"latitude\": \((self.latitude)!), \"longitude\": \((self.longitude)!)}"
         let parameters = [String: AnyObject]()
-        let objectId = OTMClient.sharedInstance().appdelegate?.objectId
+        let objectId = StudentsDatasource.objectId
         var api_name : String? = nil
         var method : String? = nil
         
@@ -93,35 +95,22 @@ class FinishLocationViewController: UIViewController, MKMapViewDelegate, CLLocat
             method = ""
         }
         
-        _ = OTMClient.sharedInstance().taskForPOSTMethod(method!, parameters: parameters, jsonBody: jsonBody, api_name!) { (results, error) in
+        _ = OTMClient.taskForPOSTMethod(method!, parameters: parameters, jsonBody: jsonBody, api_name!) { (results, error) in
             
             guard error == nil else{
-                OTMClient.sharedInstance().alert(self, "Alert", (error?.localizedDescription)!)
+                OTMClient.alert(self, "Alert", (error?.localizedDescription)!)
                 return
             }
             
-            guard let results = results else{
-                OTMClient.sharedInstance().alert(self, "Alert", "Can't update data")
+            guard results != nil else{
+                OTMClient.alert(self, "Alert", "Can't update data")
                 return
             }
-            print(results)
             
-            if api_name == "PUT"{
-                if let updatedAt = results["updatedAt"] as? String {
-                    performUIUpdatesOnMain {
-                        OTMClient.sharedInstance().appdelegate?.updatedAt = self.dateformatter.date(from: updatedAt)
-                    }
-                }
-            }else{
-                if let _ = results["objectId"] as? String, let createdAt = results["createdAt"] as? String {
-                    performUIUpdatesOnMain {
-                        OTMClient.sharedInstance().appdelegate?.createdAt = self.dateformatter.date(from: createdAt)
-                    }
-                }
+            performUIUpdatesOnMain {
+                StudentsDatasource.locations = nil
+                self.presentingViewController?.dismiss(animated: true, completion: nil)
             }
-            
-            
-            self.presentingViewController?.dismiss(animated: true, completion: nil)
         }
     }
     

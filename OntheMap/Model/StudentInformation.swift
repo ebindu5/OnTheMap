@@ -10,8 +10,7 @@ import Foundation
 
 struct StudentInformation{
     
-    var sessionId : String?
-    var accountId : String?
+    
     var firstName: String?
     var lastName : String?
     var permissions : [AnyObject]?
@@ -20,19 +19,52 @@ struct StudentInformation{
     var objectId: String?
     var createdAt: Date?
     var updatedAt: Date?
+    var mediaURL: String?
+    var mapString : String?
     
-    //sessionId : String?, accountId : String?, firstName: String?,  lastName : String?,  permissions : [AnyObject]?,  latitude : Double?, longitude: Double?,  objectId: String?, createdAt: Date?,  updatedAt: Date?
+    
     init(dictionary: [String: Any]) {
-        self.sessionId = dictionary["sessionId"] as? String
-        self.accountId = dictionary["accountId"] as? String
-        self.firstName = dictionary["firstName"] as? String
-        self.lastName = dictionary["lastName"] as? String
-        self.permissions = dictionary["permissions"] as? [AnyObject]
-        self.latitude = dictionary["latitude"] as? Double
-        self.longitude = dictionary["longitude"] as? Double
-        self.objectId = dictionary["objectId"] as? String
-        self.createdAt = dictionary["createdAt"] as? Date
-        self.updatedAt = dictionary["updatedAt"] as? Date
+        
+        if let mapString = dictionary["mapString"] as? String {
+            self.mapString = mapString
+        }
+        
+        if let mediaURL = dictionary["mediaURL"] as? String {
+            self.mediaURL = mediaURL
+        }
+        
+        
+        if let firstName = dictionary["firstName"] as? String {
+            self.firstName = firstName
+        }
+        
+        if let lastName = dictionary["lastName"] as? String {
+            self.lastName = lastName
+        }
+        
+        if let permissions = dictionary["permissions"] as? [AnyObject] {
+            self.permissions = permissions
+        }
+        
+        if let latitude = dictionary["latitude"] as? Double {
+            self.latitude = latitude
+        }
+        
+        if let longitude = dictionary["longitude"] as? Double {
+            self.longitude = longitude
+        }
+        
+        if let objectId = dictionary["objectId"] as? String {
+            self.objectId = objectId
+        }
+        
+        if let createdAt = dictionary["createdAt"] as? Date {
+            self.createdAt = createdAt
+        }
+        
+        if let updatedAt = dictionary["updatedAt"] as? Date {
+            self.updatedAt = updatedAt
+        }
         
     }
     

@@ -10,7 +10,10 @@ import Foundation
 
 class StudentsDatasource{
     
-    static var locations = [StudentInformation]()
-    
-
+    static var userFirstName : String?
+    static var userLastName : String?
+    static var accountId : String?
+    static var sessionId : String?
+    static var objectId: String?
+    static var locations : [StudentInformation]?
 }

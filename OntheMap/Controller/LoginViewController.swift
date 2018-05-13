@@ -18,6 +18,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        loginEmail.text = "e.bindu5@gmail.com"
+        loginPassword.text = "Vinayaka@5"
         loginEmail.delegate = self
         loginPassword.delegate = self
     }
@@ -39,25 +41,24 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func loginPressed(_ sender: Any) {
-        OTMClient.sharedInstance().postingSession(loginEmail.text!, loginPassword.text!){
+        OTMClient.postingSession(loginEmail.text!, loginPassword.text!){
             (success, session_id,account_id, error ) in
             performUIUpdatesOnMain {
                 if success {
-                    let appdelegate = UIApplication.shared.delegate as? AppDelegate
-                   appdelegate?.sessionId =   session_id
-                    appdelegate?.accountId = account_id
-                    OTMClient.sharedInstance().getUserData(account_id!){ (success, results, error) in
+                    StudentsDatasource.sessionId = session_id
+                    StudentsDatasource.accountId = account_id
+                    OTMClient.getUserData(account_id!){ (success, results, error) in
                             if let user = results?["user"] as? [String: AnyObject]{
                                 if let firstName = user["first_name"] as? String{
-                                    appdelegate?.firstName = firstName
+                                    StudentsDatasource.userFirstName = firstName
                                 }
                                 if let lastName = user["last_name"] as? String{
-                                    appdelegate?.lastName = lastName
+                                    StudentsDatasource.userLastName = lastName
                                 }
                                 
-                                OTMClient.sharedInstance().getObjectId{(success, object_id, error) in
+                                OTMClient.getObjectId{(success, object_id, error) in
                                     if success{
-                                       OTMClient.sharedInstance().appdelegate?.objectId = object_id!
+                                        StudentsDatasource.objectId = object_id!
                                     }
                                 }
                             } 

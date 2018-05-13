@@ -27,7 +27,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate{
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         subscribeToKeyboardNotifications()
-        if !(OTMClient.sharedInstance().appdelegate?.objectId?.isEmpty)!{
+        if !(StudentsDatasource.objectId!.isEmpty){
             let alert = UIAlertController(title: "", message: "You have alreay posted a student location. Would you like to overwrite your current location?", preferredStyle: UIAlertControllerStyle.alert)
             alert.addAction(UIAlertAction(title: "Overwrite", style: UIAlertActionStyle.default, handler: nil))
             alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
@@ -43,7 +43,7 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate{
     
     @IBAction func verifyDetails(_ sender: Any) {
         if !mediaURL.hasText  || !locationText.hasText{
-            OTMClient.sharedInstance().alert(self,"Alert","Fill all entries")
+            OTMClient.alert(self,"Alert","Fill all entries")
         }else{
             let vc = self.storyboard?.instantiateViewController(withIdentifier: "FinishLocationViewController") as? FinishLocationViewController
             

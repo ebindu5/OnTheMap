@@ -7,16 +7,14 @@
 //
 
 import Foundation
-import UIKit
 
-class OTMClient : NSObject{
+
+class OTMClient {
     
-    let appdelegate = UIApplication.shared.delegate as? AppDelegate
-    
-    func taskForPOSTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, _ api_name: String, completionHandlerForPOST: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
+    static func taskForPOSTMethod(_ method: String, parameters: [String:AnyObject], jsonBody: String, _ api_name: String, completionHandlerForPOST: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
         
         var request : URLRequest!
-
+        
         if api_name == "UDACITY_API" {
             request = URLRequest(url: URL(string: "https://www.udacity.com/api/session")!)
             request.httpMethod = "POST"
@@ -38,7 +36,7 @@ class OTMClient : NSObject{
         /* 4. Make the request */
         let task = URLSession.shared.dataTask(with: request as URLRequest) { (data, response, error) in
             func sendError(_ error: String) {
-//                print(error)
+                //                print(error)
                 let userInfo = [NSLocalizedDescriptionKey : error]
                 completionHandlerForPOST(nil, NSError(domain: "taskForPOSTMethod", code: 1, userInfo: userInfo))
             }
@@ -68,13 +66,13 @@ class OTMClient : NSObject{
             self.convertDataWithCompletionHandler(data, completionHandlerForConvertData: completionHandlerForPOST)
         }
         task.resume()
-               return task
+        return task
         
-     
+        
     }
     
     // given raw JSON, return a usable Foundation object
-    private func convertDataWithCompletionHandler(_ data: Data, completionHandlerForConvertData: (_ result: AnyObject?, _ error: NSError?) -> Void) {
+    static func convertDataWithCompletionHandler(_ data: Data, completionHandlerForConvertData: (_ result: AnyObject?, _ error: NSError?) -> Void) {
         
         var parsedResult: AnyObject! = nil
         do {
@@ -86,7 +84,7 @@ class OTMClient : NSObject{
         completionHandlerForConvertData(parsedResult, nil)
     }
     
-    func taskForGETMethod(_ method: String, _ parameters: [String:AnyObject], _ api_name: String, completionHandlerForGET: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
+    static func taskForGETMethod(_ method: String, _ parameters: [String:AnyObject], _ api_name: String, completionHandlerForGET: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) -> URLSessionDataTask {
         
         /* 2/3. Build the URL, Configure the request */
         var request = NSMutableURLRequest(url: OTMURLFromParameters(parameters, api_name, withPathExtension: method))
@@ -134,7 +132,7 @@ class OTMClient : NSObject{
     }
     
     // create a URL from parameters
-    private func OTMURLFromParameters(_ parameters: [String:AnyObject], _ api_name : String, withPathExtension: String? = nil) -> URL {
+    static  func OTMURLFromParameters(_ parameters: [String:AnyObject], _ api_name : String, withPathExtension: String? = nil) -> URL {
         
         var components = URLComponents()
         components.scheme = Constants.OTM.ApiScheme
@@ -153,7 +151,7 @@ class OTMClient : NSObject{
         }
         
         if withPathExtension == "GET"{
-            components.query =  "where={\"uniqueKey\": \"\((self.appdelegate?.accountId)!)\"}"
+            components.query =  "where={\"uniqueKey\": \"\((StudentsDatasource.accountId)!)\"}"
         }else{
             components.queryItems = [URLQueryItem]()
             for (key, value) in parameters {
@@ -164,23 +162,29 @@ class OTMClient : NSObject{
         return components.url!
     }
     
-    func getStudentLocations( _ completionHandlerForGetStudentLocations: @escaping (_ success: Bool, _ locations : [[String:AnyObject]], _ errorString: String?) -> Void) {
+    static func getStudentLocations( _ completionHandlerForGetStudentLocations: @escaping (_ success: Bool, _ locations : [StudentInformation], _ errorString: String?) -> Void) {
         
         
         let parameters = ["order" : "-updatedAt", "limit" : 100] as [String : AnyObject]
         
-        let _ =  OTMClient.sharedInstance().taskForGETMethod("", parameters, "PARSE_API") { (results, error) in
+        let _ =  taskForGETMethod("", parameters, "PARSE_API") { (results, error) in
             
             if error != nil {
-//                print(error)
-                completionHandlerForGetStudentLocations(false, [[:]], "Unable to get student location Information")
+                completionHandlerForGetStudentLocations(false, [], "Unable to get student location Information")
             } else {
-                if let locations = results?["results"] as? [[String: AnyObject]]{
-                    self.appdelegate?.locations = locations
-                    completionHandlerForGetStudentLocations(true, locations, nil)
+                if let results = results?["results"] as? [[String:AnyObject]]{
+                    for studentInfo  in results{
+                        if StudentsDatasource.locations == nil{
+                            StudentsDatasource.locations = [StudentInformation(dictionary: studentInfo)]
+                        }else{
+                            StudentsDatasource.locations?.append(StudentInformation(dictionary: studentInfo))
+                        }
+                        
+                    }
+                    completionHandlerForGetStudentLocations(true, StudentsDatasource.locations!, nil)
                 } else {
                     print("Could not find \(Constants.OTMResponseKeys.Session) in \(results!)")
-                    completionHandlerForGetStudentLocations(false, [[:]], "Unable to get student location Information")
+                    completionHandlerForGetStudentLocations(false, [], "Unable to get student location Information")
                 }
             }
             
@@ -188,12 +192,7 @@ class OTMClient : NSObject{
         
     }
     
-    // MARK: Shared Instance
-    class func sharedInstance() -> OTMClient {
-        struct Singleton {
-            static var sharedInstance = OTMClient()
-        }
-        return Singleton.sharedInstance
-    }
+    
+    
     
 }
