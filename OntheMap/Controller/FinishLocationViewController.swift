@@ -6,13 +6,14 @@
 //  Copyright © 2018 Udacity. All rights reserved.
 //
 
-import CoreLocation
+//import CoreLocation
 import UIKit
 import MapKit
 
 class FinishLocationViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate{
     
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var loadImageView: UIImageView!
     var locationText : String?
     var mediaURL: String?
     var firstName : String?
@@ -20,69 +21,23 @@ class FinishLocationViewController: UIViewController, MKMapViewDelegate, CLLocat
     let dateformatter = DateFormatter()
     var latitude : Double?
     var longitude: Double?
+    var coordinate: CLLocationCoordinate2D?
     
-    @IBOutlet weak var loadImageView: UIImageView!
     override func viewDidLoad() {
-        
-        let geoCoder = CLGeocoder()
-        loadImageView.isHidden = false
-        geoCoder.geocodeAddressString(locationText!) { (placemark, error) in
-            self.loadImageView.isHidden = true
-            guard  error == nil else{
-                OTMClient.alert(self,"Alert", "Encountered a problem")
-                return
-            }
-            
-            guard let location = placemark else{
-                OTMClient.alert(self,"Alert", "No such place exists")
-                return
-            }
-            
-            var locCoordinates: CLLocation?
-            locCoordinates = location.first?.location
+        super.viewDidLoad()
+
             let annotation = MKPointAnnotation()
-            if let coordinates = locCoordinates {
                 self.mapView.delegate = self
-                let coordinate = coordinates.coordinate
-                self.latitude = coordinate.latitude
-                self.longitude = coordinate.longitude
-                self.firstName =   StudentsDatasource.userFirstName
-                self.lastName =   StudentsDatasource.userLastName
-                
-                annotation.coordinate = coordinate
+                annotation.coordinate = self.coordinate!
                 if let firstName = self.firstName, let lastName = self.lastName {
                     annotation.title = "\(firstName) \(lastName)"
                 }
                 annotation.subtitle = self.mediaURL
                 self.mapView.addAnnotation(annotation)
                 self.mapView.showAnnotations([annotation], animated: true)
-            } else {
-                print("Coordinates could not be set.")
-            }
-            
-        }
-        
     }
     
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        let reuseId = "pin"
-        
-        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
-        if pinView == nil{
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView?.canShowCallout = true
-            pinView?.pinTintColor = UIColor.red
-            pinView?.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
-        }else{
-            pinView?.annotation = annotation
-        }
-        
-        return pinView
-        
-    }
-    
-    
-    
+
     @IBAction func updateStudentLocation(_ sender: Any) {
         let jsonBody =  "{\"uniqueKey\": \"\((StudentsDatasource.accountId)!)\", \"firstName\": \"\((StudentsDatasource.userFirstName)!)\", \"lastName\": \"\((StudentsDatasource.userLastName)!)\",\"mapString\": \"\((self.locationText)!)\", \"mediaURL\": \"\(mediaURL!)\",\"latitude\": \((self.latitude)!), \"longitude\": \((self.longitude)!)}"
         let parameters = [String: AnyObject]()
@@ -117,7 +72,22 @@ class FinishLocationViewController: UIViewController, MKMapViewDelegate, CLLocat
             }
         }
     }
-    
+  
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        let reuseId = "pin"
+        
+        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
+        if pinView == nil{
+            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
+            pinView?.canShowCallout = true
+            pinView?.pinTintColor = UIColor.red
+            pinView?.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
+        }else{
+            pinView?.annotation = annotation
+        }
+        
+        return pinView
+    }
     
     
 }

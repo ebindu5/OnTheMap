@@ -11,17 +11,14 @@ import UIKit
 
 class MapTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var locations = [StudentInformation]()
-    
+
     @IBOutlet weak var tableView: UITableView!
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if StudentsDatasource.locations != nil {
-            locations = StudentsDatasource.locations!
+            tableView.reloadData()
         }else{
             studentLocations()
         }
@@ -43,17 +40,32 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
     
     @IBAction func refreshData(_ sender: Any) {
         studentLocations()
+        tableView.reloadData()
     }
     
+    func studentLocations(){
+        OTMClient.getStudentLocations({ (success, locations, error) in
+            guard error == nil else{
+                OTMClient.alert(self, "Error", error!)
+                return
+            }
+            if success{
+                performUIUpdatesOnMain {
+                    self.tableView.reloadData()
+                }
+            }
+            
+        })
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return locations.count
+        return (StudentsDatasource.locations?.count)!
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "MapTableViewCell", for: indexPath)
-        let location = locations[(indexPath as NSIndexPath).row]
+        let location = StudentsDatasource.locations![(indexPath as NSIndexPath).row]
         if let firstname = location.firstName, let lastname = location.lastName {
             cell.textLabel?.text = (firstname ) + " " + (lastname )
         }
@@ -68,7 +80,7 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var can_not_open = true
-        let location = locations[(indexPath as NSIndexPath).row]
+        let location = StudentsDatasource.locations![(indexPath as NSIndexPath).row]
         if let mediaURL = location.mediaURL, let url = URL(string: mediaURL ){
             if UIApplication.shared.canOpenURL(url){
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -83,19 +95,6 @@ class MapTableViewController: UIViewController, UITableViewDelegate, UITableView
         }
         
     }
-    func studentLocations(){
-        OTMClient.getStudentLocations({ (success, locations, error) in
-            guard error == nil else{
-                OTMClient.alert(self, "Error", error!)
-                return
-            }
-            if success{
-                performUIUpdatesOnMain {
-                    self.locations = locations
-                    self.tableView.reloadData()
-                }
-            }
-            
-        })
-    }
+    
+
 }

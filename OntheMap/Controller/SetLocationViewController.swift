@@ -8,18 +8,18 @@
 
 import Foundation
 import UIKit
+import CoreLocation
 
 class SetLocationViewController: UIViewController, UITextFieldDelegate{
     
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet var locationText : UITextField!
     @IBOutlet var mediaURL: UITextField!
-
-    @IBAction func cancelPressed(){
-        dismiss(animated: true, completion: nil)
-    }
+    @IBOutlet weak var loadImageView: UIImageView!
     
     override func viewDidLoad() {
+        super.viewDidLoad()
+        self.loadImageView.isHidden = true
         locationText.delegate = self
         mediaURL.delegate = self
         if !(StudentsDatasource.objectId!.isEmpty){
@@ -39,32 +39,68 @@ class SetLocationViewController: UIViewController, UITextFieldDelegate{
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         unsubscribeFromKeyboardNotifications()
     }
+    
+    @IBAction func cancelPressed(){
+        dismiss(animated: true, completion: nil)
+    }
+    
+
     
     @IBAction func verifyDetails(_ sender: Any) {
         if !mediaURL.hasText  || !locationText.hasText{
             OTMClient.alert(self,"Alert","Fill all entries")
         }else{
-            let vc = self.storyboard?.instantiateViewController(withIdentifier: "FinishLocationViewController") as? FinishLocationViewController
             
-            vc?.locationText = locationText.text
-            vc?.mediaURL = mediaURL.text
-            self.navigationController?.pushViewController(vc!, animated: true)
+             self.loadImageView.isHidden = false
+            let geoCoder = CLGeocoder()
+            geoCoder.geocodeAddressString(locationText.text!) { (placemark, error) in
+                guard  error == nil else{
+                    OTMClient.alert(self,"Alert", "Encountered a problem")
+                    self.loadImageView.isHidden = true
+                    return
+                }
+                
+                guard let location = placemark  else{
+                    OTMClient.alert(self,"Alert", "No such place exists")
+                     self.loadImageView.isHidden = true
+                    return
+                }
             
+                performUIUpdatesOnMain {
+                    self.loadImageView.isHidden = true
+                    let vc = self.storyboard?.instantiateViewController(withIdentifier: "FinishLocationViewController") as? FinishLocationViewController
+                    var locCoordinates: CLLocation?
+                    locCoordinates = location.first?.location
+                    if let coordinates = locCoordinates {
+                        let coordinate = coordinates.coordinate
+                        vc?.coordinate = coordinates.coordinate
+                        vc?.latitude = coordinate.latitude
+                        vc?.longitude = coordinate.longitude
+                        vc?.firstName =   StudentsDatasource.userFirstName
+                        vc?.lastName =   StudentsDatasource.userLastName
+                    } else {
+                       OTMClient.alert(self,"Alert", "Coordinates could not be set")
+                    }
+                     vc?.locationText = self.locationText.text
+                    vc?.mediaURL = self.mediaURL.text
+                    self.navigationController?.pushViewController(vc!, animated: true)
+                }
+           
+            }
         }
-        
     }
-    
-    
-}
-
-extension SetLocationViewController{
     
     @IBAction func userDidTapView(_ sender: AnyObject) {
                 resignIfFirstResponder(locationText)
                 resignIfFirstResponder(mediaURL)
     }
+
+}
+
+extension SetLocationViewController{
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()

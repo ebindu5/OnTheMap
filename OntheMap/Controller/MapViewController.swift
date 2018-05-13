@@ -13,8 +13,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     
     @IBOutlet weak var mapView: MKMapView!
-    var locations = [StudentInformation]()
+
     var annotations = [MKPointAnnotation]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
@@ -23,12 +24,10 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if StudentsDatasource.locations != nil{
-            locations = StudentsDatasource.locations!
+            self.reloadMap()
         }else{
             studentLocations()
         }
-        self.reloadMap()
-        
     }
     
     
@@ -45,13 +44,19 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     }
     
     
+    
+    @IBAction func refreshData(_ sender: Any) {
+        studentLocations()
+        reloadMap()
+    }
+    
     func reloadMap(){
         if !annotations.isEmpty {
             mapView.removeAnnotations(annotations)
             annotations.removeAll()
         }
         
-        for dictionary in self.locations {
+        for dictionary in StudentsDatasource.locations! {
             
             var lat = Double()
             var long = Double()
@@ -104,7 +109,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         OTMClient.getStudentLocations { (success, locations, error) in
             performUIUpdatesOnMain {
                 if success{
-                    self.locations = locations
                     self.reloadMap()
                 }else{
                     OTMClient.alert(self, "Error", error!)
@@ -113,12 +117,6 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
         
     }
-    
-    
-    @IBAction func refreshData(_ sender: Any) {
-        studentLocations()
-    }
-    
     
     // MARK: - MKMapViewDelegate
     

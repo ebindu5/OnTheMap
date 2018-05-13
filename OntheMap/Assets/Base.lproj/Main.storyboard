@@ -179,7 +179,7 @@
                                 <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="MapTableViewCell" textLabel="7KQ-iH-dDY" detailTextLabel="TjM-PR-uT0" rowHeight="81" style="IBUITableViewCellStyleSubtitle" id="4G6-Kk-j1a">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="MapTableViewCell" textLabel="7KQ-iH-dDY" detailTextLabel="TjM-PR-uT0" rowHeight="81" style="IBUITableViewCellStyleSubtitle" id="4G6-Kk-j1a">
                                         <rect key="frame" x="0.0" y="28" width="320" height="81"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4G6-Kk-j1a" id="JKL-MM-VKK">
@@ -366,12 +366,20 @@
                                     <constraint firstItem="oUP-17-nNS" firstAttribute="centerX" secondItem="ClA-ze-CPD" secondAttribute="centerX" id="m9C-R7-ytc"/>
                                 </constraints>
                             </scrollView>
+                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading" translatesAutoresizingMaskIntoConstraints="NO" id="Pwx-KW-Phm">
+                                <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
+                            </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="Pwx-KW-Phm" firstAttribute="top" secondItem="9nv-ha-ZEM" secondAttribute="top" id="5SD-wA-bnI"/>
+                            <constraint firstItem="Pwx-KW-Phm" firstAttribute="bottom" secondItem="9nv-ha-ZEM" secondAttribute="bottom" id="9fm-fJ-jMI"/>
                             <constraint firstItem="ClA-ze-CPD" firstAttribute="top" secondItem="9nv-ha-ZEM" secondAttribute="top" id="IfR-1h-f8S"/>
                             <constraint firstItem="ClA-ze-CPD" firstAttribute="bottom" secondItem="9nv-ha-ZEM" secondAttribute="bottom" id="L6o-Uc-y7U"/>
+                            <constraint firstItem="Pwx-KW-Phm" firstAttribute="trailing" secondItem="9nv-ha-ZEM" secondAttribute="trailing" id="TGW-8u-9O5"/>
                             <constraint firstItem="ClA-ze-CPD" firstAttribute="leading" secondItem="9nv-ha-ZEM" secondAttribute="leading" id="WFb-LD-73b"/>
+                            <constraint firstItem="Pwx-KW-Phm" firstAttribute="leading" secondItem="9nv-ha-ZEM" secondAttribute="leading" id="lZu-rO-w8T"/>
                             <constraint firstItem="ClA-ze-CPD" firstAttribute="centerX" secondItem="9nv-ha-ZEM" secondAttribute="centerX" id="ttX-xQ-znW"/>
                             <constraint firstItem="ClA-ze-CPD" firstAttribute="trailing" secondItem="9nv-ha-ZEM" secondAttribute="trailing" id="wqu-9D-u4w"/>
                         </constraints>
@@ -388,6 +396,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="loadImageView" destination="Pwx-KW-Phm" id="s2z-Yo-UvQ"/>
                         <outlet property="locationText" destination="5MZ-wd-wUn" id="Gcw-4Z-sMO"/>
                         <outlet property="mediaURL" destination="z4L-JT-OVP" id="eyl-Il-FRk"/>
                         <outlet property="scrollView" destination="ClA-ze-CPD" id="Whe-xC-1t7"/>
@@ -427,17 +436,10 @@
                                     <action selector="updateStudentLocation:" destination="4PG-N5-j2U" eventType="touchUpInside" id="hFE-8w-QnU"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading" highlighted="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yNA-Ts-gTM">
-                                <rect key="frame" x="0.0" y="20" width="320" height="548"/>
-                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="8gn-gh-jEp" firstAttribute="leading" secondItem="TFX-Xu-oZm" secondAttribute="leading" id="01e-ru-fwd"/>
-                            <constraint firstItem="yNA-Ts-gTM" firstAttribute="leading" secondItem="TFX-Xu-oZm" secondAttribute="leading" id="4bt-D8-J6y"/>
-                            <constraint firstItem="TFX-Xu-oZm" firstAttribute="trailing" secondItem="yNA-Ts-gTM" secondAttribute="trailing" id="4yP-ST-OmQ"/>
-                            <constraint firstItem="yNA-Ts-gTM" firstAttribute="top" secondItem="TFX-Xu-oZm" secondAttribute="top" id="8Cv-oU-FiD"/>
-                            <constraint firstItem="TFX-Xu-oZm" firstAttribute="bottom" secondItem="yNA-Ts-gTM" secondAttribute="bottom" id="Axe-nM-Xkm"/>
                             <constraint firstItem="TFX-Xu-oZm" firstAttribute="bottom" secondItem="bzJ-nk-htA" secondAttribute="bottom" constant="49" id="LkB-rY-tdW"/>
                             <constraint firstItem="8gn-gh-jEp" firstAttribute="top" secondItem="TFX-Xu-oZm" secondAttribute="top" id="W3M-9H-vlO"/>
                             <constraint firstItem="bzJ-nk-htA" firstAttribute="leading" secondItem="TFX-Xu-oZm" secondAttribute="leading" constant="40" id="ZhE-mh-Bpp"/>
@@ -448,7 +450,6 @@
                         <viewLayoutGuide key="safeArea" id="TFX-Xu-oZm"/>
                     </view>
                     <connections>
-                        <outlet property="loadImageView" destination="yNA-Ts-gTM" id="CUJ-hw-DIx"/>
                         <outlet property="mapView" destination="8gn-gh-jEp" id="kuT-bR-2Si"/>
                     </connections>
                 </viewController>

@@ -14,7 +14,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var loginEmail: UITextField!
     @IBOutlet weak var loginPassword: UITextField!
     @IBOutlet weak var debugText: UILabel!
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,16 +70,15 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             
         }
     }
+
+ @IBAction func userDidTapView(_ sender: AnyObject) {
+    resignIfFirstResponder(loginPassword)
+    resignIfFirstResponder(loginEmail)
+}
     
 }
 
 extension LoginViewController{
-    
-    @IBAction func userDidTapView(_ sender: AnyObject) {
-        resignIfFirstResponder(loginPassword)
-        resignIfFirstResponder(loginEmail)
-    }
-    
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
